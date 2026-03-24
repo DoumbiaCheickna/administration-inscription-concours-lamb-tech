@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Gestion des inscriptions LAMB TECH 2026 | IIBS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Formes décoratives */
+        .shape {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .shape-1 {
+            top: -100px;
+            left: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #ff6b6b, #feca57);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape-2 {
+            bottom: -100px;
+            right: -100px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #48dbfb, #ff9ff3);
+            animation: float 25s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(50px, 50px) rotate(180deg); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 24px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.95);
+            margin-top: 8px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon i {
+            font-size: 28px;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #2d3748;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        /* Controls */
+        .controls {
+            background: rgba(255,255,255,0.95);
+            border-radius: 24px;
+            padding: 20px 24px;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 45px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 12px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            background: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .btn-export {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72,187,120,0.3);
+        }
+
+        .btn-refresh {
+            background: linear-gradient(135deg, #4299e1, #3182ce);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-refresh:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Table */
+        .table-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 24px;
+            overflow-x: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f7fafc;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th:hover {
+            background: #edf2f7;
+        }
+
+        th i {
+            margin-left: 8px;
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #2d3748;
+        }
+
+        tr:hover {
+            background: #f7fafc;
+        }
+
+        .team-name {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .badge-domain {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-cyber {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .badge-logiciel {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .badge-management {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-confirmed {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            padding: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-view {
+            background: #e0e7ff;
+            color: #4f46e5;
+        }
+
+        .btn-view:hover {
+            background: #c7d2fe;
+        }
+
+        .btn-edit {
+            background: #fed7aa;
+            color: #ea580c;
+        }
+
+        .btn-edit:hover {
+            background: #fdba74;
+        }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn-delete:hover {
+            background: #fecaca;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 32px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .modal-header h2 {
+            color: #2d3748;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #a0aec0;
+        }
+
+        .member-list {
+            margin-top: 16px;
+        }
+
+        .member-item {
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px;
+            color: #a0aec0;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            th, td {
+                padding: 12px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+
+    <div class="container">
+        <div class="header">
+            <div class="badge">
+                <i class="fas fa-lock"></i> Administration
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1>Gestion des inscriptions</h1>
+            <p>LAMB TECH 2ème Édition - IIBS 2026</p>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-value" id="totalInscriptions">0</div>
+                <div class="stat-label">Total inscriptions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="stat-value" id="totalCyber">0</div>
+                <div class="stat-label">Cybersécurité</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-code"></i></div>
+                <div class="stat-value" id="totalLogiciel">0</div>
+                <div class="stat-label">Génie Logiciel & DataIA</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-value" id="totalManagement">0</div>
+                <div class="stat-label">Management & Communication</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Rechercher par nom d'équipe, institution, email...">
+            </div>
+            <div class="filter-group">
+                <select id="domainFilter" class="filter-select">
+                    <option value="">Tous les domaines</option>
+                    <option value="Cybersécurité">🔒 Cybersécurité</option>
+                    <option value="Génie Logiciel & DataIA">💻 Génie Logiciel & DataIA</option>
+                    <option value="Management et Communication Digitale">📊 Management & Communication</option>
+                </select>
+                <button class="btn-export" id="exportBtn">
+                    <i class="fas fa-download"></i> Exporter Excel
+                </button>
+                <button class="btn-refresh" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i> Actualiser
+                </button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div id="tableContent">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 16px;">Chargement des données...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Détails -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-info-circle"></i> Détails de l'inscription</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, deleteDoc, doc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZHA0ne_E4x9CzK_E29j5_tOYAjTtrnrM",
+            authDomain: "drop-iibs.firebaseapp.com",
+            projectId: "drop-iibs",
+            storageBucket: "drop-iibs.firebasestorage.app",
+            messagingSenderId: "113120592091",
+            appId: "1:113120592091:web:2586508f5323aeeefe0cfe",
+            measurementId: "G-S6JHM7K801"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let allInscriptions = [];
+        let sortField = 'timestamp';
+        let sortDirection = 'desc';
+
+        async function loadData() {
+            try {
+                const q = query(collection(db, "inscriptions"), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+                allInscriptions = [];
+                querySnapshot.forEach((doc) => {
+                    allInscriptions.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                updateStats();
+                renderTable();
+            } catch (error) {
+                console.error("Erreur lors du chargement:", error);
+                document.getElementById('tableContent').innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 16px;"></i>
+                        <p>Erreur de chargement des données</p>
+                        <p style="font-size: 0.85rem;">${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateStats() {
+            const total = allInscriptions.length;
+            const cyber = allInscriptions.filter(i => i.domaine === "Cybersécurité").length;
+            const logiciel = allInscriptions.filter(i => i.domaine === "Génie Logiciel & DataIA").length;
+            const management = allInscriptions.filter(i => i.domaine === "Management et Communication Digitale").length;
+            
+            document.getElementById('totalInscriptions').textContent = total;
+            document.getElementById('totalCyber').textContent = cyber;
+            document.getElementById('totalLogiciel').textContent = logiciel;
+            document.getElementById('totalManagement').textContent = management;
+        }
+
+        function getDomainBadgeClass(domaine) {
+            if (domaine === "Cybersécurité") return "badge-cyber";
+            if (domaine === "Génie Logiciel & DataIA") return "badge-logiciel";
+            return "badge-management";
+        }
+
+        function formatDate(date) {
+            if (!date) return "N/A";
+            if (date.toDate) {
+                return date.toDate().toLocaleDateString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+            return new Date(date).toLocaleDateString('fr-FR');
+        }
+
+        function filterData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const domainFilter = document.getElementById('domainFilter').value;
+            
+            return allInscriptions.filter(inscription => {
+                const matchSearch = searchTerm === '' || 
+                    inscription.nomEquipe?.toLowerCase().includes(searchTerm) ||
+                    inscription.institution?.toLowerCase().includes(searchTerm) ||
+                    inscription.membres?.some(m => m.email.toLowerCase().includes(searchTerm)) ||
+                    inscription.membres?.some(m => m.nom.toLowerCase().includes(searchTerm));
+                
+                const matchDomain = domainFilter === '' || inscription.domaine === domainFilter;
+                
+                return matchSearch && matchDomain;
+            });
+        }
+
+        function sortData(data) {
+            return [...data].sort((a, b) => {
+                let aVal = a[sortField];
+                let bVal = b[sortField];
+                
+                if (sortField === 'timestamp') {
+                    aVal = aVal?.toDate?.() || new Date(aVal);
+                    bVal = bVal?.toDate?.() || new Date(bVal);
+                }
+                
+                if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+                if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function renderTable() {
+            const filtered = filterData();
+            const sorted = sortData(filtered);
+            
+            if (sorted.length === 0) {
+                document.getElementById('tableContent').innerHTML = `
+                    <div class="no-data">
+                        <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px;"></i>
+                        <p>Aucune inscription trouvée</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th onclick="window.sortTable('nomEquipe')">Équipe <i class="fas fa-sort"></i></th>
+                            <th onclick="window.sortTable('institution')">Institution <i class="fas fa-sort"></i></th>
+                            <th onclick="window.sortTable('domaine')">Domaine <i class="fas fa-sort"></i></th>
+                            <th>Membres</th>
+                            <th onclick="window.sortTable('timestamp')">Date d'inscription <i class="fas fa-sort"></i></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            for (const item of sorted) {
+                html += `
+                    <tr>
+                        <td class="team-name">${escapeHtml(item.nomEquipe || 'N/A')}</td>
+                        <td>${escapeHtml(item.institution || 'N/A')}</td>
+                        <td><span class="badge-domain ${getDomainBadgeClass(item.domaine)}">${item.domaine || 'N/A'}</span></td>
+                        <td>${item.nombreMembres || item.membres?.length || 0} membres</td>
+                        <td>${formatDate(item.timestamp)}</td>
+                        <td class="action-buttons">
+                            <button class="btn-icon btn-view" onclick="window.viewDetails('${item.id}')" title="Voir détails">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-icon btn-delete" onclick="window.deleteInscription('${item.id}')" title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            html += `</tbody></table>`;
+            document.getElementById('tableContent').innerHTML = html;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        window.sortTable = (field) => {
+            if (sortField === field) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortField = field;
+                sortDirection = 'asc';
+            }
+            renderTable();
+        };
+
+        window.viewDetails = async (id) => {
+            const inscription = allInscriptions.find(i => i.id === id);
+            if (!inscription) return;
+            
+            const modalBody = document.getElementById('modalBody');
+            let membersHtml = '';
+            
+            if (inscription.membres && inscription.membres.length > 0) {
+                membersHtml = '<div class="member-list">';
+                inscription.membres.forEach((m, idx) => {
+                    membersHtml += `
+                        <div class="member-item">
+                            <strong>Membre ${idx + 1}</strong><br>
+                            <i class="fas fa-user"></i> ${escapeHtml(m.nom)} ${escapeHtml(m.prenom)}<br>
+                            <i class="fas fa-phone"></i> ${escapeHtml(m.telephone)}<br>
+                            <i class="fas fa-envelope"></i> ${escapeHtml(m.email)}
+                        </div>
+                    `;
+                });
+                membersHtml += '</div>';
+            } else {
+                membersHtml = '<p>Aucun membre enregistré</p>';
+            }
+            
+            modalBody.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <h3><i class="fas fa-users"></i> Équipe</h3>
+                    <p><strong>Nom:</strong> ${escapeHtml(inscription.nomEquipe)}</p>
+                    <p><strong>Institution:</strong> ${escapeHtml(inscription.institution)}</p>
+                    <p><strong>Domaine:</strong> ${escapeHtml(inscription.domaine)}</p>
+                    <p><strong>Date d'inscription:</strong> ${formatDate(inscription.timestamp)}</p>
+                    <p><strong>Référence:</strong> ${inscription.id}</p>
+                </div>
+                <div>
+                    <h3><i class="fas fa-id-card"></i> Membres de l'équipe (${inscription.nombreMembres || inscription.membres?.length || 0})</h3>
+                    ${membersHtml}
+                </div>
+            `;
+            
+            document.getElementById('detailModal').classList.add('active');
+        };
+        
+        window.deleteInscription = async (id) => {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette inscription ? Cette action est irréversible.')) {
+                try {
+                    await deleteDoc(doc(db, "inscriptions", id));
+                    showToast('✅ Inscription supprimée avec succès', 'success');
+                    await loadData();
+                } catch (error) {
+                    console.error("Erreur lors de la suppression:", error);
+                    showToast('❌ Erreur lors de la suppression', 'error');
+                }
+            }
+        };
+        
+        window.closeModal = () => {
+            document.getElementById('detailModal').classList.remove('active');
+        };
+        
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#48bb78' : '#f56565'};
+                color: white;
+                padding: 12px 24px;
+                border-radius: 12px;
+                z-index: 1001;
+                animation: slideIn 0.3s ease;
+                font-weight: 500;
+            `;
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const filtered = filterData();
+            if (filtered.length === 0) {
+                showToast('Aucune donnée à exporter', 'error');
+                return;
+            }
+            
+            let csv = "ID,Équipe,Institution,Domaine,Nombre de membres,Date d'inscription,Membres\n";
+            for (const item of filtered) {
+                const membresStr = item.membres?.map(m => `${m.nom} ${m.prenom} (${m.email})`).join('; ') || '';
+                csv += `"${item.id}","${item.nomEquipe || ''}","${item.institution || ''}","${item.domaine || ''}",${item.nombreMembres || item.membres?.length || 0},"${formatDate(item.timestamp)}","${membresStr}"\n`;
+            }
+            
+            const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.setAttribute("download", `inscriptions_lambtech_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('📊 Export CSV réussi', 'success');
+        });
+        
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            loadData();
+        });
+        
+        document.getElementById('searchInput').addEventListener('input', () => renderTable());
+        document.getElementById('domainFilter').addEventListener('change', () => renderTable());
+        
+        document.getElementById('detailModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('detailModal')) {
+                closeModal();
+            }
+        });
+        
+        loadData();
+    </script>
+</body>
+</html>
